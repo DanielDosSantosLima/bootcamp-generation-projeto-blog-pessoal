@@ -27,51 +27,53 @@ public class UsuarioControllerTest {
 
 	@Autowired
 	private TestRestTemplate testRestTemplate;
-	
+
 	@Autowired
 	private UsuarioService usuarioService;
-	
+
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
-	
+
 	@BeforeAll
-	void start() {
+	void start(){
+
 		usuarioRepository.deleteAll();
-		
+
 		usuarioService.cadastrarUsuario(new Usuario(0L, 
-				"Root", "root@root.com", "rootroot", " "));
+			"Root", "root@root.com", "rootroot", "-"));
+
 	}
-	
+
 	@Test
 	@DisplayName("Cadastrar Um Usuário")
 	public void deveCriarUmUsuario() {
-		
-		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L,
-				"Paulo Antunes", "paulo_antunes@email.com.br","12234568", "-" ));
-		
-		ResponseEntity<Usuario>corpoResposta = testRestTemplate
-				.exchange("/usuarios/cadastrar", HttpMethod.POST, corpoRequisicao, Usuario.class);
-		
+
+		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L, 
+			"Paulo Antunes", "paulo_antunes@email.com.br", "13465278", "-"));
+
+		ResponseEntity<Usuario> corpoResposta = testRestTemplate
+			.exchange("/usuarios/cadastrar", HttpMethod.POST, corpoRequisicao, Usuario.class);
+
 		assertEquals(HttpStatus.CREATED, corpoResposta.getStatusCode());
+	
 	}
-	
-	
+
 	@Test
 	@DisplayName("Não deve permitir duplicação do Usuário")
 	public void naoDeveDuplicarUsuario() {
+
 		usuarioService.cadastrarUsuario(new Usuario(0L, 
-				"Maria da Silva", "maria_silva@email.com.br", "123334456", "-"));
-		
-		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L,
-				"Maria da Silva", "maria_silva@email.com.br", "123334456", "-"));
-		
-		ResponseEntity<Usuario> corpoResposta = testRestTemplate.
-				exchange("/usuarios/cadastrar", HttpMethod.POST, corpoRequisicao, Usuario.class);
-		
+			"Maria da Silva", "maria_silva@email.com.br", "13465278", "-"));
+
+		HttpEntity<Usuario> corpoRequisicao = new HttpEntity<Usuario>(new Usuario(0L, 
+			"Maria da Silva", "maria_silva@email.com.br", "13465278", "-"));
+
+		ResponseEntity<Usuario> corpoResposta = testRestTemplate
+			.exchange("/usuarios/cadastrar", HttpMethod.POST, corpoRequisicao, Usuario.class);
+
 		assertEquals(HttpStatus.BAD_REQUEST, corpoResposta.getStatusCode());
 	}
-	
+
 	@Test
 	@DisplayName("Atualizar um Usuário")
 	public void deveAtualizarUmUsuario() {
@@ -109,4 +111,5 @@ public class UsuarioControllerTest {
 		assertEquals(HttpStatus.OK, resposta.getStatusCode());
 
 	}
+
 }
